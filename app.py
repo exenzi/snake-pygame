@@ -12,15 +12,16 @@ pygame.init()
 pygame.font.init()
 
 # Создание экрана
-res_x = ROWS * CELL_WIDTH + CELL_BORDER * (ROWS - 1)
-res_y = COLUMNS * CELL_WIDTH + CELL_BORDER * (COLUMNS - 1)
+res_x = COLUMNS * CELL_WIDTH + CELL_BORDER * (COLUMNS - 1) + OFFSET * 2
+res_y = ROWS * CELL_WIDTH + CELL_BORDER * (ROWS - 1) + OFFSET * 2
 screen = pygame.display.set_mode((res_x, res_y))
 
 # Иконка и название окна
 pygame.display.set_caption('Змейка')
 icon = pygame.image.load('snake.png')
 pygame.display.set_icon(icon)
-myfont = pygame.font.SysFont('Arial', FONT_SIZE)
+# myfont = pygame.font.SysFont('Arial', FONT_SIZE)
+myfont = pygame.font.Font('OpenSans-Regular.ttf', FONT_SIZE)
 
 start = time.time()
 direction = None
@@ -78,8 +79,8 @@ while running:
             elif cell == 2:
                 cell_color = SNACK_COLOR
             pygame.draw.rect(screen, cell_color,
-                            Rect(OFFSET + CELL_BORDER*x + x * CELL_WIDTH,
-                                OFFSET + CELL_BORDER*y + y * CELL_WIDTH,
+                            Rect(OFFSET + CELL_BORDER*x + x*CELL_WIDTH,
+                                OFFSET + CELL_BORDER*y + y*CELL_WIDTH,
                                 CELL_WIDTH, CELL_WIDTH))
 
     
@@ -98,12 +99,14 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+            print('Финальный счёт:', snake.score())
         
         if event.type == pygame.KEYDOWN:
             print('Нажата клавиша:', pygame.key.name(event.key))
+            
             if event.key == pygame.K_q:
                 running = False
-                break
+                print('Финальный счёт:', snake.score())
 
             if not snake.finish():
                 if event.key == pygame.K_UP:
@@ -122,7 +125,7 @@ while running:
                         paused = True
                         print('Пауза: включить')
             else:
-                snake = Snake(ROWS, COLUMNS)
+                snake = Snake(ROWS, COLUMNS, UNLIMITED)
                 paused = False
 
     

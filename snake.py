@@ -6,7 +6,8 @@ class Snake:
     def __init__(self, rows, columns, unlimited = False):
         self.rows = rows
         self.columns = columns
-        self.snake = [(rows // 2 - 1, columns // 2 - 1)]
+        self.snake = [(rows // 2, columns // 2),
+                      (rows // 2, columns // 2 - 1)]
         self.direction = 'right'
         self.snacks = set()
         self.add_snack()
@@ -32,6 +33,10 @@ class Snake:
             new_cell = (self.snake[0][0] - 1, self.snake[0][1])
         elif self.direction == 'down':
             new_cell = (self.snake[0][0] + 1, self.snake[0][1])
+
+        if self.unlimited:
+            new_cell = self.__check_limits(new_cell)
+
         if not self.finish(new_cell):
             self.snake.insert(0, new_cell)
             # Проверть не съедена ли еда
@@ -44,6 +49,16 @@ class Snake:
         else:
             self.finished = True
 
+    def __check_limits(self, cell):
+        if cell[0] < 0:
+            return (self.rows, cell[1])
+        elif cell[0] > self.rows - 1:
+            return (0, cell[1])
+        elif cell[1] < 0:
+            return (cell[0], self.columns)
+        elif cell[1] > self.columns - 1:
+            return (cell[0], 0)
+        return cell
 
     def get_board(self):
         # Создаём поле
@@ -87,8 +102,12 @@ class Snake:
         else:
             new_head = self.snake[0]
 
-        if new_head in self.snake[1:] or new_head[0] < 0 or new_head[0] > self.rows - 1 \
-                or new_head[1] < 0 or new_head[1] > self.columns - 1:
+        if new_head in self.snake[1:]:
             return True
-        else:
-            return False
+
+        if not self.unlimited:
+            if new_head[0] < 0 or new_head[0] > self.rows - 1 \
+                    or new_head[1] < 0 or new_head[1] > self.columns - 1:
+                return True
+        
+        return False
